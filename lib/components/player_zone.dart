@@ -463,7 +463,7 @@ class _PlayerZoneState extends State<PlayerZone> {
           children: [
             Container(
               height: isDoubleView ? 5.w : 10.h,
-              padding: EdgeInsets.only(bottom: isDoubleView ? 0.5.h : 1.h),
+              padding: EdgeInsets.only(bottom: isDoubleView ? 0.h : 1.h),
               child: Text(
                 lifeChangingCount != 0
                     ? (lifeChangingCount > 0
@@ -474,10 +474,13 @@ class _PlayerZoneState extends State<PlayerZone> {
                     fontSize: isDoubleView ? 2.h : 4.h, color: Colors.white),
               ),
             ),
-            Text(
-              lifeCount.toString(),
-              style: TextStyle(
-                  fontSize: isDoubleView ? 4.h : 8.h, color: Colors.white),
+            Container(
+              padding: EdgeInsets.only(top: isDoubleView ? 1.h : 0),
+              child: Text(
+                lifeCount.toString(),
+                style: TextStyle(
+                  fontSize: isDoubleView ? 4.h : 7.h, color: Colors.white),
+              ),
             ),
             Container(
               height: isDoubleView ? 5.w : 10.h,

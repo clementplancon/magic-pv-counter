@@ -102,6 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _diceWinnerPlayer2 = false;
   bool _diceWinnerPlayer3 = false;
   bool _diceWinnerPlayer4 = false;
+  int selectedDiceOption = 20;
 
   @override
   void initState() {
@@ -214,19 +215,61 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _launchDice() async {
+    // Define a list of integer options
+    List<int> options = [2, 3, 4, 6, 10, 20, 100];
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        List<Widget> optionWidgets = options.map((int option) {
+          return TextButton(
+            child: Text("D$option"),
+            onPressed: () {
+              // Update the selected option when the user makes a choice
+              setState(() {
+                selectedDiceOption = option;
+              });
+              Navigator.of(context).pop();
+            },
+          );
+        }).toList();
+
+        // Return the dialog widget
+        return AlertDialog(
+          title: Text('Choose a dice option'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: optionWidgets,
+          ),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+              setState(() {
+                selectedDiceOption = 0;
+              });
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+    if (selectedDiceOption == 0) {
+      return;
+    }
     setState(() {
       isDiceLaunch = true;
     });
     for (var i = 0; i < 10; i++) {
       await Future.delayed(const Duration(milliseconds: 100));
       setState(() {
-        _diceResultPlayer1 = Random().nextInt(20) + 1;
-        _diceResultPlayer2 = Random().nextInt(20) + 1;
+        _diceResultPlayer1 = Random().nextInt(selectedDiceOption) + 1;
+        _diceResultPlayer2 = Random().nextInt(selectedDiceOption) + 1;
         if (_playerNumber > 2) {
-          _diceResultPlayer3 = Random().nextInt(20) + 1;
+          _diceResultPlayer3 = Random().nextInt(selectedDiceOption) + 1;
         }
         if (_playerNumber > 3) {
-          _diceResultPlayer4 = Random().nextInt(20) + 1;
+          _diceResultPlayer4 = Random().nextInt(selectedDiceOption) + 1;
         }
       });
       if (i == 9) {

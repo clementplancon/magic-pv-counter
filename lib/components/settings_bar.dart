@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import '../plans/plans_list.dart';
 
 class SettingsBar extends StatefulWidget {
   const SettingsBar({
@@ -28,6 +31,7 @@ class _SettingsBarState extends State<SettingsBar> {
   late final Function playerFunc;
   late bool changingLifeTotal;
   late bool changingNumberPlayer;
+  String plansname = "";
 
   @override
   void initState() {
@@ -177,10 +181,15 @@ class _SettingsBarState extends State<SettingsBar> {
                             Icons.favorite_sharp,
                             color: Colors.white,
                           )),
-                      SvgPicture.asset(
-                        'images/Logo2.svg',
-                        height: 7.5.h,
-                      ),
+                          GestureDetector(
+                            child: SvgPicture.asset(
+                              'images/Logo2.svg',
+                              height: 7.5.h,
+                            ),
+                            onTap: () {
+                              showPlanDialog(context);
+                            },
+                          ),
                       IconButton(
                           onPressed: () => resetFunc(),
                           icon: const Icon(
@@ -199,5 +208,80 @@ class _SettingsBarState extends State<SettingsBar> {
                           )),
                     ]),
     );
+  }
+
+  showPlanDialog(BuildContext context) async {
+    if (plansname == "") {
+      setState(() {
+        plansname = changePlan();
+      });
+    }
+    showDialog(
+  context: context,
+  builder: (context) {
+    String contentText = plansname;
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return AlertDialog(
+          content: Image.asset(
+            "images/$contentText",
+          ),
+          actions: [
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Change Plan'),
+              onPressed: () {
+                setState(() {
+                  contentText = changePlan();
+                  plansname = contentText;
+                });
+              },
+            )
+          ],
+        );
+      },
+    );
+  },
+);
+    // await showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       content: Image.asset(
+    //         "images/$plansname",
+    //       ),
+    //       actions: [
+    //         TextButton(
+    //           child: Text('Close'),
+    //           onPressed: () {
+    //             Navigator.of(context).pop();
+    //           },
+    //         ),
+    //         TextButton(
+    //           child: Text('Change Plan'),
+    //           onPressed: () {
+    //             setState(() {
+    //               plansname = changePlan();
+    //             });
+    //           },
+    //         )
+    //       ],
+    //     );
+    //   },
+    // );
+  }
+
+  changePlan() {
+    int indexOfNextPlan = Random().nextInt(plans_list.length);
+    String nextPlan = plans_list[indexOfNextPlan];
+    if (plansname == nextPlan) {
+      nextPlan = changePlan();
+    }
+    return nextPlan;
   }
 }
